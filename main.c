@@ -1,6 +1,5 @@
 #include <ncurses.h>
 #include <stdlib.h>
-#include <ctype.h>
 
 typedef struct Player
 {
@@ -31,7 +30,7 @@ int main()
     player = playerSetup();
 
     //Main game loop
-    while((ch = getch()) != 'q' && (ch = getch()) != 'Q')
+    while((ch = getch()) != 'q')
     {
         handleInput(ch, player);
     }
@@ -114,32 +113,32 @@ int handleInput(int input, Player *player)
 {
     int newY;
     int newX;
-
-    //Convert to lower case
-    input = tolower(input);
-
     switch(input)
     {
         //Move up
         case 'w':
+        case 'W':
             newY = player->yPosition-1;
             newX = player->xPosition;
             break;
 
         //Move down
         case 's':
+        case 'S':
             newY = player->yPosition+1;
             newX = player->xPosition;
             break;
 
         //Move left
         case 'a':
+        case 'A':
             newY = player->yPosition;
             newX = player->xPosition-1;
             break;
 
         //Move right
         case 'd':
+        case 'D':
             newY = player->yPosition;
             newX = player->xPosition+1;
             break;
