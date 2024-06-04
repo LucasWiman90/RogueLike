@@ -13,6 +13,7 @@ int mapSetup();
 Player *playerSetup();
 int handleInput(int input, Player *player);
 int playerMove(int y, int x, Player *player);
+int checkPosition(int newY, int newX, Player *player);
 
 int main() 
 {
@@ -39,6 +40,11 @@ int main()
     return 0;
 }
 
+/**
+ * @brief Draws the screen
+ * @param None
+ * @return Returns int
+ * */
 int screenSetup()
 {
     initscr();
@@ -49,6 +55,11 @@ int screenSetup()
     return 1;
 }
 
+/**
+ * @brief Draws the map
+ * @param None
+ * @return Returns int
+ * */
 int mapSetup()
 {
     mvprintw(13, 13, "--------");
@@ -73,7 +84,12 @@ int mapSetup()
     mvprintw(15, 40, "------------");
 }
 
-Player *playerSetup()
+/**
+ * @brief Sets up the player
+ * @param None
+ * @return Returns a Player pointer
+ * */
+Player* playerSetup()
 {
     Player *newPlayer;
     newPlayer = malloc(sizeof(Player));
@@ -87,41 +103,82 @@ Player *playerSetup()
     return newPlayer;
 }
 
+/**
+ * @brief Reads player input
+ * @param input: The player key input
+ * @param player: Pointer to the player
+ * @return Returns int
+ * */
 int handleInput(int input, Player *player)
 {
+    int newY;
+    int newX;
     switch(input)
     {
         //Move up
         case 'w':
         case 'W':
-            playerMove(player->yPosition-1, player->xPosition, player);
+            newY = player->yPosition-1;
+            newX = player->xPosition;
             break;
 
         //Move down
         case 's':
         case 'S':
-            playerMove(player->yPosition+1, player->xPosition, player);
+            newY = player->yPosition+1;
+            newX = player->xPosition;
             break;
 
         //Move left
         case 'a':
         case 'A':
-            playerMove(player->yPosition, player->xPosition-1, player);
+            newY = player->yPosition;
+            newX = player->xPosition-1;
             break;
 
         //Move right
         case 'd':
         case 'D':
-            playerMove(player->yPosition, player->xPosition+1, player);
+            newY = player->yPosition;
+            newX = player->xPosition+1;
             break;
 
         default:
             break;
     }
+
+    checkPosition(newY, newX, player);
 }
 
-//Move the player, replace old position with floor.
-//Update position and draw the player in the new position and move the cursor
+/**
+ * @brief Checks player position to determine collision
+ * @param newY: New y-position
+ * @param newX: New x-position
+ * @param player: Pointer to the player
+ * @return Returns int
+ * */
+int checkPosition(int newY, int newX, Player *player)
+{
+    int space;
+    switch(mvinch(newY, newX))
+    {
+        case '.':
+            playerMove(newY, newX, player);
+            break;
+        default:
+            move(player->yPosition, player->xPosition);
+            break;
+    }
+}
+
+/**
+ * @brief Moves the player to a new position. Replace old position
+ * with a floor tile '.', then draw the player again '@'
+ * @param y: Y-coordinate of the player
+ * @param x: X-coordinate of the player
+ * @param player: Pointer to the player
+ * @return Returns int
+ * */
 int playerMove(int y, int x, Player *player)
 {
     mvprintw(player->yPosition, player->xPosition, ".");
