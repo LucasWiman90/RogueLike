@@ -11,9 +11,9 @@ typedef struct Player
 int screenSetup();
 int mapSetup();
 Player *playerSetup();
-int handleInput(int input, Player *player);
-int playerMove(int y, int x, Player *player);
-int checkPosition(int newY, int newX, Player *player);
+void handleInput(int input, Player *player);
+void playerMove(int y, int x, Player *player);
+void checkPosition(int newY, int newX, Player *player);
 
 int main() 
 {
@@ -43,7 +43,7 @@ int main()
 /**
  * @brief Draws the screen
  * @param None
- * @return Returns int
+ * @return Returns 0 when succesful
  * */
 int screenSetup()
 {
@@ -52,13 +52,13 @@ int screenSetup()
     noecho();
     refresh();
 
-    return 1;
+    return 0;
 }
 
 /**
  * @brief Draws the map
  * @param None
- * @return Returns int
+ * @return Returns 0 when succesful
  * */
 int mapSetup()
 {
@@ -82,12 +82,14 @@ int mapSetup()
     mvprintw(13, 40, "|..........|");
     mvprintw(14, 40, "|..........|");
     mvprintw(15, 40, "------------");
+
+    return 0;
 }
 
 /**
  * @brief Sets up the player
  * @param None
- * @return Returns a Player pointer
+ * @return Returns a Player pointer when succesful
  * */
 Player* playerSetup()
 {
@@ -107,9 +109,8 @@ Player* playerSetup()
  * @brief Reads player input
  * @param input: The player key input
  * @param player: Pointer to the player
- * @return Returns int
  * */
-int handleInput(int input, Player *player)
+void handleInput(int input, Player *player)
 {
     int newY;
     int newX;
@@ -155,9 +156,8 @@ int handleInput(int input, Player *player)
  * @param newY: New y-position
  * @param newX: New x-position
  * @param player: Pointer to the player
- * @return Returns int
  * */
-int checkPosition(int newY, int newX, Player *player)
+void checkPosition(int newY, int newX, Player *player)
 {
     int space;
     switch(mvinch(newY, newX))
@@ -177,9 +177,8 @@ int checkPosition(int newY, int newX, Player *player)
  * @param y: Y-coordinate of the player
  * @param x: X-coordinate of the player
  * @param player: Pointer to the player
- * @return Returns int
  * */
-int playerMove(int y, int x, Player *player)
+void playerMove(int y, int x, Player *player)
 {
     mvprintw(player->yPosition, player->xPosition, ".");
 
