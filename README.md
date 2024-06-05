@@ -15,4 +15,4 @@ To clean up:
 
 # Running the Roguelike
 After compilation, you can run the main output file as follows:
-"./main.out"
+"./main"
