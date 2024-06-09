@@ -30,6 +30,8 @@ void checkPosition(int newY, int newX, Player *player);
 //Room functions
 Room * createRoom(int y, int x, int height, int width);
 void drawRoom(Room *room);
+void freeRoom(Room *room);
+void freeMap(Room **map, int size);
 
 int main() 
 {
@@ -41,7 +43,7 @@ int main()
     screenSetup();
 
     //Setup the map
-    rooms = mapSetup();
+    rooms = mapSetup(6);
 
     //Setup the player
     player = playerSetup();
@@ -51,6 +53,12 @@ int main()
     {
         handleInput(ch, player);
     }
+
+    //Free player memory
+    free(player);
+
+    //Free the map memory
+    freeMap(rooms, 6);
 
     endwin();
 
@@ -74,13 +82,18 @@ int screenSetup()
 
 /**
  * @brief Initializes and sets up the map with rooms.
- * @param None
+ * @param size How many rooms the map should have.
  * @return Returns a pointer to an array of Room pointers when succesful
  * */
-Room ** mapSetup()
+Room ** mapSetup(int size)
 {
     Room ** rooms;
-    rooms = safe_malloc(sizeof(Room) * 6);
+    rooms = safe_malloc(sizeof(Room) * size);
+
+    // Initialize all elements to NULL
+    for (int i = 0; i < 6; i++) {
+        rooms[i] = NULL;
+    }
 
     rooms[0] = createRoom(13, 13, 6, 8);
     drawRoom(rooms[0]);
@@ -169,6 +182,36 @@ void drawRoom(Room *room)
         {
             mvprintw(y, x, ".");
         }
+    }
+}
+
+/**
+ * @brief Frees memory allocated for a single room.
+ * @param room: Pointer to the room to be freed.
+ */
+void freeRoom(Room *room) 
+{
+    if (room != NULL) {
+        free(room);
+    }
+}
+
+/**
+ * @brief Frees memory allocated for an array of rooms.
+ * @param map: Pointer to the array of room pointers.
+ * @param size: The number of rooms in the array.
+ */
+void freeMap(Room **map, int size) 
+{
+    if (map != NULL) 
+    {
+        for (int i = 0; i < size; i++) 
+        {
+            if (map[i] != NULL) {
+                freeRoom(map[i]);
+            }
+        }
+        free(map);
     }
 }
 
