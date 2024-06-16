@@ -1,6 +1,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
+#include <time.h>
+
 typedef struct Position
 {
     int y;
@@ -13,6 +15,7 @@ typedef struct Room
     Position position;
     int height;
     int width;
+    Position ** doors;
     //Monster ** monsters;
     //Item ** items;
 } Room;
@@ -85,6 +88,8 @@ int screenSetup()
     noecho();
     refresh();
 
+    srand(time(NULL));
+
     return 0;
 }
 
@@ -156,6 +161,28 @@ Room * createRoom(int y, int x, int height, int width)
     newRoom->height = height;
     newRoom->width = width;
 
+    newRoom->doors = safe_malloc(sizeof(Position) * 4);
+
+    //Top door
+    newRoom->doors[0] = safe_malloc(sizeof(Position));
+    newRoom->doors[0]->x = rand() % (width - 2) + newRoom->position.x + 1;
+    newRoom->doors[0]->y = newRoom->position.y;
+
+    //Bottom door
+    newRoom->doors[1] = safe_malloc(sizeof(Position));
+    newRoom->doors[1]->x = rand() % (width - 2) + newRoom->position.x + 1;
+    newRoom->doors[1]->y = newRoom->position.y + newRoom->height - 1;
+
+    //Left door
+    newRoom->doors[2] = safe_malloc(sizeof(Position));
+    newRoom->doors[2]->y = rand() % (height - 2) + newRoom->position.y + 1;
+    newRoom->doors[2]->x = newRoom->position.x;
+
+    //Right door
+    newRoom->doors[3] = safe_malloc(sizeof(Position));
+    newRoom->doors[3]->y = rand() % (height - 2) + newRoom->position.y + 1;
+    newRoom->doors[3]->x = newRoom->position.x + width - 1;
+
     return newRoom;
 }
 
@@ -191,6 +218,12 @@ void drawRoom(Room *room)
             mvprintw(y, x, ".");
         }
     }
+
+    //Draw doors
+    mvprintw(room->doors[0]->y, room->doors[0]->x, "+");
+    mvprintw(room->doors[1]->y, room->doors[1]->x, "+");
+    mvprintw(room->doors[2]->y, room->doors[2]->x, "+");
+    mvprintw(room->doors[3]->y, room->doors[3]->x, "+");
 }
 
 /**
@@ -199,9 +232,18 @@ void drawRoom(Room *room)
  */
 void freeRoom(Room *room) 
 {
-    if (room != NULL) {
-        free(room);
+    if (room != NULL && room->doors != NULL) {
+        //Loop through each door position and free it
+        for(int i = 0; i < 4; i++)
+        {
+            free(room->doors[i]);
+        }
+
+        //Free the doors array itself.
+        free(room->doors);
     }
+    //Free the room structure
+    free(room);
 }
 
 /**
