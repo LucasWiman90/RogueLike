@@ -1,5 +1,5 @@
 # RogueLike
-Repository for RogueLike project in C
+Repository for my RogueLike project in C
 
 To be able to compile and run the file, you need ncurses installed
 
